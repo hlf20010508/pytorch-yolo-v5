@@ -1,7 +1,7 @@
-# path: dataset  # dataset root dir
-train: /kaggle/input/yolov5/images/train  # train images (relative to 'path') 128 images
-val: /kaggle/input/yolov5/dataset/images/test  # val images (relative to 'path') 128 images
-test:  /kaggle/input/yolov5/dataset/images/test # test images (optional)
+path: /kaggle/input/yolov5  # dataset root dir
+train: images/train  # train images (relative to 'path') 128 images
+val: images/test  # val images (relative to 'path') 128 images
+test:  images/test # test images (optional)
 
 # Classes
 nc: 24  # number of classes
