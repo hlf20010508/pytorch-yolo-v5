@@ -1,0 +1,12 @@
+# path: dataset  # dataset root dir
+train: /kaggle/input/yolov5/images/train  # train images (relative to 'path') 128 images
+val: /kaggle/input/yolov5/dataset/images/test  # val images (relative to 'path') 128 images
+test:  /kaggle/input/yolov5/dataset/images/test # test images (optional)
+
+# Classes
+nc: 24  # number of classes
+names: ['Two', 'Congratulation', 'Heart_single', 'OK',
+    'Heart_1', 'Nine', 'One', 'Four', 'Insult',
+    'Heart_3', 'ILY', 'Eight', 'Seven', 'Honour', 'Heart_2',
+    'Five', 'Thumb_up', 'Fist', 'Thumb_down', 'Three',
+    'Six', 'Rock', 'Prayer', 'Palm_up'] # class names
