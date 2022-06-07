@@ -75,6 +75,7 @@ def run(
         half=False,  # use FP16 half-precision inference
         dnn=False,  # use OpenCV DNN for ONNX inference
 ):
+    my_classes=['fall','stand','sit']
     source = str(source)
     save_img = not nosave and not source.endswith('.txt')  # save inference images
     is_file = Path(source).suffix[1:] in (IMG_FORMATS + VID_FORMATS)
@@ -138,10 +139,9 @@ def run(
                 s += f'{i}: '
             else:
                 p, im0, frame = path, im0s.copy(), getattr(dataset, 'frame', 0)
-
             p = Path(p)  # to Path
             save_path = str(save_dir / p.name)  # im.jpg
-            txt_path = str(save_dir / 'labels' / p.stem) + ('' if dataset.mode == 'image' else f'_{frame}')  # im.txt
+            txt_path = str(save_dir / 'labels' / 'submission') + ('' if dataset.mode == 'image' else f'_{frame}')  # im.txt
             s += '%gx%g ' % im.shape[2:]  # print string
             gn = torch.tensor(im0.shape)[[1, 0, 1, 0]]  # normalization gain whwh
             imc = im0.copy() if save_crop else im0  # for save_crop
@@ -159,17 +159,19 @@ def run(
                 conf_max=0
                 xyxy_max=None
                 cls_max=None
+                line_max=None
                 for *xyxy, conf, cls in reversed(det):
                     if conf>conf_max:
-                        if save_txt:  # Write to file
-                            # xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
-                            line = (cls, *xyxy, conf) if save_conf else (cls, *xyxy)  # label format
-                            with open(txt_path + '.txt', 'w') as f:
-                                f.write(('%g ' * len(line)).rstrip() % line + '\n')
-                                xyxy_max=xyxy
-                                cls_max=cls
-                                conf_max=conf
-
+                      xyxy_max=xyxy
+                      cls_max=cls
+                      conf_max=conf
+                
+                if save_txt:  # Write to file
+                    # xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
+                    line = (*xyxy_max, conf_max) if save_conf else (*xyxy_max,)  # label format
+                    with open(txt_path, 'a') as f:
+                        f.write((p.name+' '+my_classes[int(cls_max)]+' %g ' * len(line)).rstrip() % line + '\n')
+                                
 
                 if save_img or save_crop or view_img:  # Add bbox to image
                     c = int(cls_max)  # integer class
@@ -210,7 +212,7 @@ def run(
     t = tuple(x / seen * 1E3 for x in dt)  # speeds per image
     LOGGER.info(f'Speed: %.1fms pre-process, %.1fms inference, %.1fms NMS per image at shape {(1, 3, *imgsz)}' % t)
     if save_txt or save_img:
-        s = f"\n{len(list(save_dir.glob('labels/*.txt')))} labels saved to {save_dir / 'labels'}" if save_txt else ''
+        s = f"\nsubmission saved to {save_dir / 'labels'}" if save_txt else ''
         LOGGER.info(f"Results saved to {colorstr('bold', save_dir)}{s}")
     if update:
         strip_optimizer(weights)  # update model (to fix SourceChangeWarning)
