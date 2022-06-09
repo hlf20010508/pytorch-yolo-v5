@@ -1,4 +1,4 @@
-path: /kaggle/input/fall-detection-dataset/fall_dataset  # dataset root dir
+path: /kaggle/input/fall-detection-dataset-merge/fall_dataset  # dataset root dir
 train: images/train  # train images (relative to 'path') 128 images
 val: images/val  # val images (relative to 'path') 128 images
 
